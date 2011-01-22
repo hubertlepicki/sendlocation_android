@@ -16,6 +16,9 @@
             </intent-filter>
         </activity>
         <uses-library android:name="com.google.android.maps" />
+        <activity android:name=".AddDescriptionActivity"
+                  android:label="@string/add_description">
+        </activity> 
     </application>
     <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="8" />
 </manifest> 

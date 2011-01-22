@@ -9,6 +9,9 @@ import android.widget.LinearLayout;
 import android.view.View;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ZoomControls;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.content.Intent;
 
 public class SendLocationActivity extends MapActivity
 {
@@ -16,6 +19,7 @@ public class SendLocationActivity extends MapActivity
     private MapController controller;
     private ZoomControls zoomControls;
     private SendLocationOverlay overlay;
+    static public com.google.android.maps.GeoPoint currentLocation;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -25,6 +29,21 @@ public class SendLocationActivity extends MapActivity
         initMapView();
         initMyLocation();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 1, 0, "Send Location");
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+      if (item.getItemId() == 1) {
+        startActivity(new Intent(this, AddDescriptionActivity.class));
+      }
+      return true;
+    }
+
 
     @Override
     public void onStart() {
@@ -71,6 +90,7 @@ public class SendLocationActivity extends MapActivity
       public void onLocationChanged(android.location.Location location) {
         super.onLocationChanged(location);
         controller.animateTo(overlay.getMyLocation());
+        currentLocation = overlay.getMyLocation();
       }
     }
 
@@ -80,6 +100,7 @@ public class SendLocationActivity extends MapActivity
         public void run() {
           controller.setZoom(8);
           controller.animateTo(overlay.getMyLocation());
+          currentLocation = overlay.getMyLocation();
         }
       });
       map.getOverlays().add(overlay);
