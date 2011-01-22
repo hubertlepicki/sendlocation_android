@@ -1,15 +1,88 @@
 package com.hubertlepicki.sendlocation;
 
-import android.app.Activity;
 import android.os.Bundle;
+import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
+import com.google.android.maps.MapView;
+import com.google.android.maps.MyLocationOverlay;
+import android.widget.LinearLayout;
+import android.view.View;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.ZoomControls;
 
-public class SendLocationActivity extends Activity
+public class SendLocationActivity extends MapActivity
 {
-    /** Called when the activity is first created. */
+    private MapView map;
+    private MapController controller;
+    private ZoomControls zoomControls;
+    private SendLocationOverlay overlay;
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        initMapView();
+        initMyLocation();
+    }
+
+    @Override
+    public void onStart() {
+      super.onStart();
+      overlay.enableMyLocation();
+    }
+
+    @Override
+    public void onPause() {
+      super.onPause();
+      overlay.disableMyLocation();
+    }
+
+    @Override
+    public boolean isRouteDisplayed() {
+      return false;
+    }
+
+    private void initMapView() {
+      map = (MapView) findViewById(R.id.map);
+      controller = map.getController();
+      map.setSatellite(false);
+      //map.setBuiltInZoomControls(true);
+      zoomControls = (ZoomControls) findViewById(R.id.zoomcontrols);
+      zoomControls.setOnZoomInClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                      controller.zoomIn();
+              }
+      });
+      zoomControls.setOnZoomOutClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                      controller.zoomOut();
+              }
+      });
+    }
+
+    private class SendLocationOverlay extends MyLocationOverlay {
+      SendLocationOverlay(android.content.Context context, MapView mapView) {
+        super(context, mapView);
+      }
+
+      public void onLocationChanged(android.location.Location location) {
+        super.onLocationChanged(location);
+        controller.animateTo(overlay.getMyLocation());
+      }
+    }
+
+    private void initMyLocation() {
+      overlay = new SendLocationOverlay(this, map);
+      overlay.runOnFirstFix(new Runnable() {
+        public void run() {
+          controller.setZoom(8);
+          controller.animateTo(overlay.getMyLocation());
+        }
+      });
+      map.getOverlays().add(overlay);
     }
 }
+
