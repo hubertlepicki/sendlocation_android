@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import java.lang.Double;
+import java.lang.Integer;
+import java.net.URLEncoder;
 
 public class AddDescriptionActivity extends Activity {
     private Button submitButton;
@@ -25,7 +27,7 @@ public class AddDescriptionActivity extends Activity {
           public void onClick(View v) {
             Intent msg = new Intent(Intent.ACTION_SEND);
             msg.setType("text/plain");
-            msg.putExtra(Intent.EXTRA_SUBJECT, "Shared location");
+            msg.putExtra(Intent.EXTRA_SUBJECT, description.getText().toString());
             msg.putExtra(Intent.EXTRA_TEXT, locationUrl(description.getText().toString()));
             startActivity(Intent.createChooser(msg, "Share location..."));
           }
@@ -37,8 +39,10 @@ public class AddDescriptionActivity extends Activity {
              Double.toString(SendLocationActivity.currentLocation.getLatitudeE6()/1000000.0) + 
              "/" +
              Double.toString(SendLocationActivity.currentLocation.getLongitudeE6()/1000000.0) + 
-             "/12/normal/" +
-             description
+             "/" +
+             Integer.toString(SendLocationActivity.currentZoomLevel) + 
+             "/normal/" +
+             URLEncoder.encode(description)
              ;
     }
 }

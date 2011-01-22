@@ -20,6 +20,7 @@ public class SendLocationActivity extends MapActivity
     private ZoomControls zoomControls;
     private SendLocationOverlay overlay;
     static public com.google.android.maps.GeoPoint currentLocation;
+    static public int currentZoomLevel;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -40,6 +41,7 @@ public class SendLocationActivity extends MapActivity
     public boolean onOptionsItemSelected(MenuItem item) {
       if (item.getItemId() == 1) {
         startActivity(new Intent(this, AddDescriptionActivity.class));
+        currentZoomLevel = map.getZoomLevel();
       }
       return true;
     }
